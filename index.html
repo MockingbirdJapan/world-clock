@@ -45,7 +45,16 @@ body.fs { display:flex; flex-direction:column; }
 .tbtn:hover { color:var(--on); }
 
 /* ── MAIN SECTION ── */
-#main-section { text-align:center; padding:2rem 1.5rem 1.5rem; background:var(--bg-hdr); }
+#main-section {
+  text-align:center;
+  min-height: calc(100dvh - 36px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: var(--bg-hdr);
+  padding: 2rem 1.5rem;
+}
 #main-zone { font-size:11px; letter-spacing:3px; color:var(--dim); text-transform:uppercase; margin-bottom:5px; }
 #main-city { font-size:13px; letter-spacing:2px; color:#888; margin-bottom:18px; }
 
@@ -599,21 +608,54 @@ function pomoSkip() {
   pomoRender();
 }
 
-// ── ZAZEN BOWL GONG ────────────────────────────────────
+// ── ZAZEN BOWL GONG — iOS compatible ───────────────────
+// AudioContext must be created on a user gesture on iOS.
+// We create it on first tap and keep it alive, resuming before each play.
+let _audioCtx = null;
+
+function getAudioCtx() {
+  if (!_audioCtx) {
+    _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return _audioCtx;
+}
+
+// Prime the audio context on first user interaction anywhere on the page
+function primeAudio() {
+  try {
+    const ctx = getAudioCtx();
+    if (ctx.state === 'suspended') ctx.resume();
+  } catch(e) {}
+}
+document.addEventListener('touchstart', primeAudio, { once: false, passive: true });
+document.addEventListener('click', primeAudio, { once: false, passive: true });
+
 function playGong() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    [110, 110.4, 303.6, 551.2, 880].forEach((f,i) => {
-      const g = [0.5, 0.3, 0.18, 0.08, 0.03][i];
-      const osc = ctx.createOscillator();
-      const env = ctx.createGain();
-      osc.type = 'sine'; osc.frequency.value = f;
-      env.gain.setValueAtTime(0, ctx.currentTime);
-      env.gain.linearRampToValueAtTime(g, ctx.currentTime + 0.01);
-      env.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 8);
-      osc.connect(env); env.connect(ctx.destination);
-      osc.start(); osc.stop(ctx.currentTime + 8);
-    });
+    const ctx = getAudioCtx();
+    // Resume context (iOS suspends it after inactivity)
+    const doPlay = () => {
+      const t = ctx.currentTime;
+      [110, 110.4, 303.6, 551.2, 880].forEach((f, i) => {
+        const g = [0.5, 0.3, 0.18, 0.08, 0.03][i];
+        const osc = ctx.createOscillator();
+        const env = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = f;
+        env.gain.setValueAtTime(0, t);
+        env.gain.linearRampToValueAtTime(g, t + 0.01);
+        env.gain.exponentialRampToValueAtTime(0.0001, t + 8);
+        osc.connect(env);
+        env.connect(ctx.destination);
+        osc.start(t);
+        osc.stop(t + 8);
+      });
+    };
+    if (ctx.state === 'suspended') {
+      ctx.resume().then(doPlay);
+    } else {
+      doPlay();
+    }
   } catch(e) {}
 }
 
