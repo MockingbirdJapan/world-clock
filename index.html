@@ -234,7 +234,7 @@ body.fs #grid { flex:1; }
       <div id="zazen-idle">
         <div id="zazen-presets">
           <button class="zpre" onclick="zazenSetPreset(3)">3</button>
-          <button class="zpre zsel" id="zpre-5" onclick="zazenSetPreset(5)">5</button>
+          <button class="zpre" id="zpre-5" onclick="zazenSetPreset(5)">5</button>
           <button class="zpre" onclick="zazenSetPreset(10)">10</button>
           <button class="zpre" onclick="zazenSetPreset(20)">20</button>
           <button class="zpre" id="zpre-custom" onclick="zazenSetCustom()">custom</button>
@@ -623,28 +623,35 @@ _gongAudio.src = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2
 
 function unlockAudio() {}  // no-op, kept so button handlers don't error
 
-// Persistent <audio> element appended to DOM — required for iOS silent switch compatibility
-let _gongEl = null;
-function _initGong() {
-  if (_gongEl) return;
-  _gongEl = document.createElement('audio');
-  _gongEl.setAttribute('x-webkit-airplay', 'deny');
-  _gongEl.setAttribute('playsinline', '');
-  _gongEl.preload = 'auto';
-  _gongEl.src = _gongSrc;
-  document.body.appendChild(_gongEl);
+// ── GONG — pre-warmed Audio pool ───────────────────────
+// Strategy: create a silent "warm-up" element on first user
+// gesture (satisfies iOS autoplay policy), then play fresh
+// Audio() clones each time (reliable on desktop too).
+let _gongWarmed = false;
+
+function _warmGong() {
+  if (_gongWarmed) return;
+  _gongWarmed = true;
+  try {
+    const a = new Audio(_gongSrc);
+    a.volume = 0;
+    a.play().then(() => { a.pause(); }).catch(() => {});
+  } catch(e) {}
 }
-// Init immediately when DOM is ready
-if (document.body) { _initGong(); } else { document.addEventListener('DOMContentLoaded', _initGong); }
+
+// Warm on any first touch/click anywhere in the page
+document.addEventListener('click',     _warmGong, { once: true });
+document.addEventListener('touchstart', _warmGong, { once: true });
+
+function unlockAudio() { _warmGong(); }
 
 function playGong() {
   try {
-    _initGong();
-    // Reset and play the existing DOM element
-    _gongEl.pause();
-    _gongEl.currentTime = 0;
-    _gongEl.volume = 1.0;
-    const p = _gongEl.play();
+    const a = new Audio(_gongSrc);
+    a.setAttribute('x-webkit-airplay', 'deny');
+    a.setAttribute('playsinline', '');
+    a.volume = 1.0;
+    const p = a.play();
     if (p && p.catch) p.catch(() => {});
   } catch(e) {}
 }
@@ -660,12 +667,10 @@ let zazenCustomMode = false;
 
 function zazenSetPreset(mins) {
   zazenMins = mins; zazenLeft = mins * 60; zazenCustomMode = false;
-  document.querySelectorAll('.zpre').forEach(b => b.classList.remove('zsel'));
-  // Highlight correct preset button by text content
   document.querySelectorAll('.zpre').forEach(b => {
-    if (b.textContent === String(mins)) b.classList.add('zsel');
+    b.classList.remove('zsel');
+    if (b.textContent.trim() === String(mins)) b.classList.add('zsel');
   });
-  document.getElementById('zpre-custom').classList.remove('zsel');
   document.getElementById('zazen-custom-input').classList.remove('visible');
   document.getElementById('zazen-custom-unit').classList.remove('visible');
   zazenRenderIdle();
@@ -754,6 +759,9 @@ function zazenReset() {
 setTimeout(() => {
   document.getElementById('clock-body').classList.add('ready');
 }, 3000);
+
+// Init zazen preset highlight
+zazenSetPreset(5);
 </script>
 </body>
 </html>
