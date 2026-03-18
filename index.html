@@ -612,73 +612,62 @@ function pomoSkip() {
 }
 
 // ── AUDIO ────────────────────────────────────────────────
-// Rules that actually work across Chrome, Safari, iOS, Android:
-//
-// 1. Create AudioContext INSIDE the click/touch handler (not on load).
-//    If created outside a gesture it starts 'suspended' and resume()
-//    may silently fail on some browsers.
-//
-// 2. resume() is async — never call doPlay() immediately after;
-//    always wait inside .then() so the context is truly running.
-//
-// 3. Also listen on touchstart/touchend/mousedown/keydown on body
-//    (the Matt Montag pattern) so any interaction primes the context,
-//    even if the timer fires without a fresh gesture.
-//
-// 4. Safari allows max 4 AudioContext instances — reuse one.
+// iOS silent switch blocks Web Audio (createOscillator) because it
+// plays on the ringer channel. Fix: on first tap, play a tiny silent
+// <audio> element — this moves iOS onto the media channel, which
+// ignores the silent switch. Web Audio then plays through it too.
+// Works on desktop Chrome/Firefox unchanged (silent elem is a no-op).
 
 let _audioCtx = null;
+let _unlocked = false;
 
-function _getCtx() {
-  if (!_audioCtx) {
-    try {
-      _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      // Body-level listeners: resume on ANY interaction so timer-end
-      // gongs work even when user hasn't tapped recently.
-      const events = ['touchstart','touchend','mousedown','keydown'];
-      const wake = () => {
-        if (_audioCtx && _audioCtx.state === 'suspended') {
-          _audioCtx.resume();
-        }
-      };
-      events.forEach(e => document.body.addEventListener(e, wake, { passive: true }));
-    } catch(e) { return null; }
-  }
-  return _audioCtx;
+// Minimal silent MP3 — 0.01s, 44 bytes of actual audio
+const SILENT_MP3 = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAADhAC2trb/////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//tQxAADwAABpAAAACAAADSAAAAETEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV';
+
+function _unlockForIOS() {
+  if (_unlocked) return;
+  _unlocked = true;
+  try {
+    const a = document.createElement('audio');
+    a.setAttribute('x-webkit-airplay', 'deny');
+    a.preload = 'auto';
+    a.src = SILENT_MP3;
+    a.play().catch(() => {});
+  } catch(e) {}
 }
 
 function unlockAudio() {
-  // Called synchronously inside button handlers — creates ctx in gesture.
-  _getCtx();
-  if (_audioCtx && _audioCtx.state === 'suspended') {
-    _audioCtx.resume();
+  _unlockForIOS();
+  if (!_audioCtx) {
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
   }
-}
-
-function _doPlay(ctx) {
-  const t = ctx.currentTime;
-  [110, 110.4, 303.6, 551.2, 880].forEach((f, i) => {
-    const g = [0.5, 0.3, 0.18, 0.08, 0.03][i];
-    const osc = ctx.createOscillator();
-    const env = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = f;
-    env.gain.setValueAtTime(0, t);
-    env.gain.linearRampToValueAtTime(g, t + 0.01);
-    env.gain.exponentialRampToValueAtTime(0.0001, t + 8);
-    osc.connect(env);
-    env.connect(ctx.destination);
-    osc.start(t);
-    osc.stop(t + 8);
-  });
+  if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
 }
 
 function playGong() {
-  const ctx = _getCtx();
-  if (!ctx) return;
-  // Always go through resume().then() — even if state appears 'running',
-  // this is a no-op on modern browsers but a required step on Safari.
-  ctx.resume().then(() => _doPlay(ctx)).catch(() => {});
+  _unlockForIOS();
+  if (!_audioCtx) {
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return; }
+  }
+  const ctx = _audioCtx;
+  const go = () => {
+    const t = ctx.currentTime;
+    [110, 110.4, 303.6, 551.2, 880].forEach((f, i) => {
+      const g = [0.5, 0.3, 0.18, 0.08, 0.03][i];
+      const osc = ctx.createOscillator();
+      const env = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = f;
+      env.gain.setValueAtTime(0, t);
+      env.gain.linearRampToValueAtTime(g, t + 0.01);
+      env.gain.exponentialRampToValueAtTime(0.0001, t + 8);
+      osc.connect(env);
+      env.connect(ctx.destination);
+      osc.start(t);
+      osc.stop(t + 8);
+    });
+  };
+  ctx.resume().then(go).catch(() => {});
 }
 
 // ═══════════════════════════════════════════════════════
