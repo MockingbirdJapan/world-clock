@@ -57,7 +57,6 @@ body.fs { display:flex; flex-direction:column; }
 .h-ci { width:16px; height:16px; border-radius:50%; border:1.5px solid var(--on); background:transparent; flex-shrink:0; transition:background .12s; }
 .h-ci.done { background:var(--on); }
 .h-name { font-size:8px; letter-spacing:2px; color:#444; text-transform:uppercase; font-family:var(--ui); transition:color .15s; }
-#habit-date { font-size:8px; letter-spacing:1px; color:#252525; margin-left:auto; font-family:var(--ui); }
 
 /* ── CALCULATOR ── */
 #calc-section { background:#060606; padding:14px 16px; }
@@ -69,7 +68,7 @@ body.fs { display:flex; flex-direction:column; }
 #calc-rate.manual { color:#4a3a0a; }
 #calc-rate-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
 #calc-rate-lbl { font-size:8px; letter-spacing:2px; color:#2a2a2a; text-transform:uppercase; font-family:var(--ui); white-space:nowrap; }
-#calc-rate-input { background:#0a0a0a; border:1px solid #1e1e1e; color:var(--on); font-family:var(--ui); font-size:11px; letter-spacing:2px; padding:4px 6px; border-radius:2px; width:80px; text-align:right; }
+#calc-rate-input { background:#0a0a0a; border:1px solid #1e1e1e; color:var(--on); font-family:var(--ui); font-size:12px; letter-spacing:2px; padding:6px 8px; border-radius:2px; width:80px; text-align:right; -webkit-appearance:none; appearance:none; }
 #calc-rate-input:focus { outline:none; border-color:var(--on); }
 #calc-rate-input::placeholder { color:#222; }
 #calc-rate-badge { font-size:7px; letter-spacing:1px; padding:2px 6px; border-radius:2px; text-transform:uppercase; font-family:var(--ui); white-space:nowrap; border:1px solid; }
@@ -240,7 +239,6 @@ body.fs { display:flex; flex-direction:column; }
       <div class="h-ci" id="h-ci"></div>
       <span class="h-name">Breathe</span>
     </div>
-    <span id="habit-date"></span>
   </div>
 </div>
 
@@ -342,7 +340,7 @@ body.fs { display:flex; flex-direction:column; }
       </div>
       <div id="calc-rate-row">
         <span id="calc-rate-lbl">Rate</span>
-        <input id="calc-rate-input" type="number" placeholder="live" step="0.01" oninput="calcRateInput()">
+        <input id="calc-rate-input" type="text" inputmode="decimal" placeholder="live" autocomplete="off" autocorrect="off" spellcheck="false" oninput="calcRateInput()">
         <span id="calc-rate-badge" class="live">live</span>
         <button id="calc-rate-clear" onclick="calcRateClear()">clear</button>
       </div>
@@ -529,11 +527,7 @@ function habitRender() {
   const state = habitLoad();
   document.getElementById('h-sq').classList.toggle('done', state.focus);
   document.getElementById('h-ci').classList.toggle('done', state.breathe);
-  const d = new Date();
-  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
-  document.getElementById('habit-date').textContent =
-    days[d.getDay()] + ' ' + String(d.getDate()).padStart(2,'0') + ' ' + months[d.getMonth()];
+
 }
 
 function toggleHabit(which) {
@@ -968,7 +962,8 @@ function calcRateClear() {
 }
 
 function calcGetRate() {
-  const override = parseFloat(document.getElementById('calc-rate-input').value);
+  const raw = document.getElementById('calc-rate-input').value.trim().replace(/[^0-9.]/g,'');
+  const override = parseFloat(raw);
   if (override > 0) return { rate: override, source: 'manual override' };
   if (_fxRate)      return { rate: _fxRate,   source: 'live frankfurter.app' };
   return null;
