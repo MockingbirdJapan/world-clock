@@ -45,10 +45,7 @@ body.fs { display:flex; flex-direction:column; }
 .tbtn:hover { color:var(--on); }
 .tbtn.habit-open { color:var(--on); }
 
-/* ── HABIT DRAWER ── */
-#habit-drawer { overflow:hidden; max-height:0; opacity:0; transition:max-height .25s ease, opacity .2s ease; background:#060606; border-bottom:1px solid #0d0d0d; }
-#habit-drawer.open { max-height:60px; opacity:1; }
-#habit-inner { display:flex; align-items:center; gap:20px; padding:10px 16px; }
+/* habit items sit inline in toolbar */
 .habit-item { display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
 .habit-item:hover .h-name { color:#666; }
 .h-sq { width:16px; height:16px; border:1.5px solid var(--on); background:transparent; flex-shrink:0; transition:background .12s; }
@@ -226,10 +223,7 @@ body.fs { display:flex; flex-direction:column; }
 
 <div id="toolbar">
   <div></div>
-  <button class="tbtn" id="btnhabit" onclick="toggleHabits()">⛶</button>
-</div>
-<div id="habit-drawer">
-  <div id="habit-inner">
+  <div id="habit-inline" style="display:none; align-items:center; gap:16px; margin-right:12px;">
     <div class="habit-item" id="habit-focus" onclick="toggleHabit('focus')">
       <div class="h-sq" id="h-sq"></div>
       <span class="h-name">Focus</span>
@@ -239,6 +233,7 @@ body.fs { display:flex; flex-direction:column; }
       <span class="h-name">Breathe</span>
     </div>
   </div>
+  <button class="tbtn" id="btnhabit" onclick="toggleHabits()">⛶</button>
 </div>
 
 <div id="clock-body">
@@ -538,9 +533,9 @@ function toggleHabit(which) {
 
 function toggleHabits() {
   habitOpen = !habitOpen;
-  const drawer = document.getElementById('habit-drawer');
+  const inline = document.getElementById('habit-inline');
   const btn = document.getElementById('btnhabit');
-  drawer.classList.toggle('open', habitOpen);
+  inline.style.display = habitOpen ? 'flex' : 'none';
   btn.classList.toggle('habit-open', habitOpen);
   if (habitOpen) habitRender();
 }
@@ -1000,6 +995,35 @@ async function calcFx(dir) {
 }
 
 // ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// CALCULATOR KEYBOARD HANDLER
+// ═══════════════════════════════════════════════════════
+document.addEventListener('keydown', function(e) {
+  const calcWrap = document.getElementById('calc-wrap');
+  const rateInput = document.getElementById('calc-rate-input');
+  if (!calcWrap) return;
+  const st = calcWrap.style.maxHeight;
+  if (st === '0px' || st === '0' || calcWrap.classList.contains('closed')) return;
+  if (document.activeElement === rateInput) return;
+  const key = e.key;
+  if (key >= '0' && key <= '9')         { e.preventDefault(); calcNum(key); }
+  else if (key === '.')                  { e.preventDefault(); calcDot(); }
+  else if (key === '+')                  { e.preventDefault(); calcOp('+'); }
+  else if (key === '-')                  { e.preventDefault(); calcOp('−'); }
+  else if (key === '*')                  { e.preventDefault(); calcOp('×'); }
+  else if (key === '/')                  { e.preventDefault(); calcOp('÷'); }
+  else if (key === 'Enter' || key === '='){ e.preventDefault(); calcEq(); }
+  else if (key === 'Backspace')          { e.preventDefault(); calcBackspace(); }
+  else if (key === 'Escape')             { e.preventDefault(); calcAC(); }
+  else if (key === '%')                  { e.preventDefault(); calcPct(); }
+});
+
+function calcBackspace() {
+  if (calcFresh || calcVal === '0' || calcVal === 'ERR') return;
+  calcVal = calcVal.length > 1 ? calcVal.slice(0, -1) : '0';
+  calcDisp();
+}
+
 // Safety net: show after 3s regardless
 setTimeout(() => {
   document.getElementById('clock-body').classList.add('ready');
