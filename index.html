@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,9 +41,54 @@ body.fs { display:flex; flex-direction:column; }
 #clock-body.ready { opacity:1; }
 
 /* ── TOOLBAR ── */
-#toolbar { display:flex; justify-content:flex-end; align-items:center; padding:10px 20px; background:var(--bg); }
-.tbtn { background:transparent; border:none; color:#333; font-family:var(--ui); font-size:16px; letter-spacing:2px; padding:4px 6px; cursor:pointer; transition:color .15s; }
+#toolbar { display:flex; justify-content:flex-end; align-items:center; padding:8px 16px; background:var(--bg); min-height:36px; }
+.tbtn { background:transparent; border:none; color:#333; font-family:var(--ui); font-size:16px; padding:4px 6px; cursor:pointer; transition:color .15s; line-height:1; }
 .tbtn:hover { color:var(--on); }
+.tbtn.habit-open { color:var(--on); }
+
+/* ── HABIT DRAWER ── */
+#habit-drawer { overflow:hidden; max-height:0; opacity:0; transition:max-height .25s ease, opacity .2s ease; background:#060606; border-bottom:1px solid #0d0d0d; }
+#habit-drawer.open { max-height:60px; opacity:1; }
+#habit-inner { display:flex; align-items:center; gap:20px; padding:10px 16px; }
+.habit-item { display:flex; align-items:center; gap:8px; cursor:pointer; user-select:none; }
+.habit-item:hover .h-name { color:#666; }
+.h-sq { width:16px; height:16px; border:1.5px solid var(--on); background:transparent; flex-shrink:0; transition:background .12s; }
+.h-sq.done { background:var(--on); }
+.h-ci { width:16px; height:16px; border-radius:50%; border:1.5px solid var(--on); background:transparent; flex-shrink:0; transition:background .12s; }
+.h-ci.done { background:var(--on); }
+.h-name { font-size:8px; letter-spacing:2px; color:#444; text-transform:uppercase; font-family:var(--ui); transition:color .15s; }
+#habit-date { font-size:8px; letter-spacing:1px; color:#252525; margin-left:auto; font-family:var(--ui); }
+
+/* ── CALCULATOR ── */
+#calc-section { background:#060606; padding:14px 16px; }
+#calc-display-wrap { border-bottom:1px solid #0f0f0f; margin-bottom:10px; padding-bottom:6px; }
+#calc-expr { font-size:9px; color:#2a2a2a; text-align:right; letter-spacing:1px; min-height:14px; font-family:var(--ui); }
+#calc-main { font-size:28px; color:var(--on); text-align:right; letter-spacing:2px; font-family:var(--seg); }
+#calc-rate { font-size:8px; text-align:right; letter-spacing:1px; min-height:13px; margin-top:2px; font-family:var(--ui); color:#1a2a1a; }
+#calc-rate.live   { color:#1e4a1e; }
+#calc-rate.manual { color:#4a3a0a; }
+#calc-rate-row { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+#calc-rate-lbl { font-size:8px; letter-spacing:2px; color:#2a2a2a; text-transform:uppercase; font-family:var(--ui); white-space:nowrap; }
+#calc-rate-input { background:#0a0a0a; border:1px solid #1e1e1e; color:var(--on); font-family:var(--ui); font-size:11px; letter-spacing:2px; padding:4px 6px; border-radius:2px; width:80px; text-align:right; }
+#calc-rate-input:focus { outline:none; border-color:var(--on); }
+#calc-rate-input::placeholder { color:#222; }
+#calc-rate-badge { font-size:7px; letter-spacing:1px; padding:2px 6px; border-radius:2px; text-transform:uppercase; font-family:var(--ui); white-space:nowrap; border:1px solid; }
+#calc-rate-badge.live   { color:#1e4a1e; border-color:#122a12; }
+#calc-rate-badge.manual { color:#6a4a0a; border-color:#3a2a08; }
+#calc-rate-clear { background:transparent; border:1px solid #1a1a1a; color:#2a2a2a; font-family:var(--ui); font-size:8px; letter-spacing:1px; padding:3px 7px; border-radius:2px; cursor:pointer; text-transform:uppercase; }
+#calc-rate-clear:hover { border-color:#444; color:#555; }
+#calc-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:4px; }
+.ck { background:#0a0a0a; border:1px solid #1a1a1a; color:#555; font-family:var(--ui); font-size:11px; letter-spacing:1px; padding:8px 4px; text-align:center; cursor:pointer; border-radius:2px; user-select:none; transition:color .1s, border-color .1s; }
+.ck:hover { color:#888; border-color:#333; }
+.ck.op  { color:var(--on); border-color:#2a2000; }
+.ck.op:hover { border-color:var(--on); }
+.ck.eq  { background:#140e00; border-color:var(--on); color:var(--on); }
+.ck.zero { grid-column:span 2; }
+.ck.clr { color:#8b2020; border-color:#2a0808; }
+.ck.clr:hover { color:#c0392b; }
+.ck.fx  { color:#3a7acc; border-color:#0a1830; font-size:9px; letter-spacing:0; }
+.ck.fx:hover { border-color:#4a9eff; color:#4a9eff; }
+.ck.span2 { grid-column:span 2; }
 
 /* ── MAIN SECTION ── */
 #main-section {
@@ -96,7 +142,7 @@ body.fs { display:flex; flex-direction:column; }
 #grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:1px; background:#0a0a0a; }
 .cell { background:var(--bg-cell); padding:12px 14px; cursor:pointer; transition:background .12s; position:relative; }
 .cell:hover { background:#0c0900; }
-.cell.active { background:#0a0700; border-top:2px solid var(--on); }
+.cell.active { background:#0a0700; outline:1.5px solid var(--on); outline-offset:-1.5px; }
 .cell.active::after { content:'▲ MAIN'; position:absolute; top:4px; right:8px; font-size:8px; color:var(--on); letter-spacing:1px; }
 .cname { font-size:11px; color:#999; letter-spacing:1px; margin-bottom:1px; }
 .czn   { font-size:9px;  color:var(--muted); letter-spacing:1px; margin-bottom:4px; }
@@ -175,15 +221,27 @@ body.fs { display:flex; flex-direction:column; }
 
 #footer { text-align:center; padding:10px; font-size:9px; color:#1a1a1a; letter-spacing:1px; }
 
-body.fs #toolbar, body.fs #main-section { flex-shrink:0; }
-body.fs #grid { flex:1; }
+/* fullscreen mode removed */
 </style>
 </head>
 <body>
 
 <div id="toolbar">
   <div></div>
-  <button class="tbtn" id="btnfs" onclick="toggleFS()">⛶</button>
+  <button class="tbtn" id="btnhabit" onclick="toggleHabits()">⛶</button>
+</div>
+<div id="habit-drawer">
+  <div id="habit-inner">
+    <div class="habit-item" id="habit-focus" onclick="toggleHabit('focus')">
+      <div class="h-sq" id="h-sq"></div>
+      <span class="h-name">Focus</span>
+    </div>
+    <div class="habit-item" id="habit-breathe" onclick="toggleHabit('breathe')">
+      <div class="h-ci" id="h-ci"></div>
+      <span class="h-name">Breathe</span>
+    </div>
+    <span id="habit-date"></span>
+  </div>
 </div>
 
 <div id="clock-body">
@@ -267,6 +325,51 @@ body.fs #grid { flex:1; }
   </div>
   <div class="collapsible" id="grid-wrap" style="max-height:2000px; opacity:1;">
     <div id="grid"></div>
+  </div>
+
+  <!-- Calculator toggle -->
+  <div class="toggle-bar" onclick="toggleSection('calc')">
+    <span class="toggle-arr open" id="arr-calc">▼</span>
+    <span class="toggle-lbl">Calculator</span>
+    <span class="toggle-arr open" id="arr-calc2">▼</span>
+  </div>
+  <div class="collapsible" id="calc-wrap" style="max-height:600px; opacity:1;">
+    <div id="calc-section">
+      <div id="calc-display-wrap">
+        <div id="calc-expr"> </div>
+        <div id="calc-main">0</div>
+        <div id="calc-rate"> </div>
+      </div>
+      <div id="calc-rate-row">
+        <span id="calc-rate-lbl">Rate</span>
+        <input id="calc-rate-input" type="number" placeholder="live" step="0.01" oninput="calcRateInput()">
+        <span id="calc-rate-badge" class="live">live</span>
+        <button id="calc-rate-clear" onclick="calcRateClear()">clear</button>
+      </div>
+      <div id="calc-grid">
+        <div class="ck clr" onclick="calcAC()">AC</div>
+        <div class="ck op" onclick="calcSign()">+/-</div>
+        <div class="ck op" onclick="calcPct()">%</div>
+        <div class="ck op" onclick="calcOp('÷')">÷</div>
+        <div class="ck" onclick="calcNum('7')">7</div>
+        <div class="ck" onclick="calcNum('8')">8</div>
+        <div class="ck" onclick="calcNum('9')">9</div>
+        <div class="ck op" onclick="calcOp('×')">×</div>
+        <div class="ck" onclick="calcNum('4')">4</div>
+        <div class="ck" onclick="calcNum('5')">5</div>
+        <div class="ck" onclick="calcNum('6')">6</div>
+        <div class="ck op" onclick="calcOp('−')">−</div>
+        <div class="ck" onclick="calcNum('1')">1</div>
+        <div class="ck" onclick="calcNum('2')">2</div>
+        <div class="ck" onclick="calcNum('3')">3</div>
+        <div class="ck op" onclick="calcOp('+')">+</div>
+        <div class="ck zero" onclick="calcNum('0')">0</div>
+        <div class="ck" onclick="calcDot()">.</div>
+        <div class="ck eq" onclick="calcEq()">=</div>
+        <div class="ck fx span2" onclick="calcFx('jpy2usd')">¥ → USD</div>
+        <div class="ck fx span2" onclick="calcFx('usd2jpy')">USD → ¥</div>
+      </div>
+    </div>
   </div>
 
   <div id="footer"></div>
@@ -406,25 +509,51 @@ function setMain(z) {
 }
 
 // ═══════════════════════════════════════════════════════
-// FULLSCREEN
+// HABIT TRACKER
 // ═══════════════════════════════════════════════════════
-function toggleFS() {
-  if (!document.fullscreenElement) {
-    document.documentElement.requestFullscreen();
-    document.body.classList.add('fs');
-    document.getElementById('btnfs').textContent = '✕';
-  } else {
-    document.exitFullscreen();
-    document.body.classList.remove('fs');
-    document.getElementById('btnfs').textContent = '⛶';
-  }
+let habitOpen = false;
+const habitKey = () => new Date().toISOString().slice(0,10); // YYYY-MM-DD
+
+function habitLoad() {
+  const saved = JSON.parse(localStorage.getItem('wc_habits') || '{}');
+  const today = habitKey();
+  if (saved.date !== today) return { date: today, focus: false, breathe: false };
+  return saved;
 }
-document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) {
-    document.body.classList.remove('fs');
-    document.getElementById('btnfs').textContent = '⛶';
-  }
-});
+
+function habitSave(state) {
+  localStorage.setItem('wc_habits', JSON.stringify(state));
+}
+
+function habitRender() {
+  const state = habitLoad();
+  document.getElementById('h-sq').classList.toggle('done', state.focus);
+  document.getElementById('h-ci').classList.toggle('done', state.breathe);
+  const d = new Date();
+  const days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  const months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  document.getElementById('habit-date').textContent =
+    days[d.getDay()] + ' ' + String(d.getDate()).padStart(2,'0') + ' ' + months[d.getMonth()];
+}
+
+function toggleHabit(which) {
+  const state = habitLoad();
+  state[which] = !state[which];
+  habitSave(state);
+  habitRender();
+}
+
+function toggleHabits() {
+  habitOpen = !habitOpen;
+  const drawer = document.getElementById('habit-drawer');
+  const btn = document.getElementById('btnhabit');
+  drawer.classList.toggle('open', habitOpen);
+  btn.classList.toggle('habit-open', habitOpen);
+  if (habitOpen) habitRender();
+}
+
+// Reset check — on each tick, re-render habits so date-based reset is live
+setInterval(habitRender, 60000);
 
 // ═══════════════════════════════════════════════════════
 // TICK — performance.now() based, no drift
@@ -475,11 +604,11 @@ document.fonts.load('bold 92px DSEG7Bold').then(() => {
 // ═══════════════════════════════════════════════════════
 // SECTION TOGGLES
 // ═══════════════════════════════════════════════════════
-const sectionState = { pomo: true, zazen: true, grid: true };
+const sectionState = { pomo: true, zazen: true, grid: true, calc: true };
 function toggleSection(id) {
   sectionState[id] = !sectionState[id];
-  const ids = { pomo:'pomo-wrap', zazen:'zazen-wrap', grid:'grid-wrap' };
-  const heights = { pomo:'300px', zazen:'300px', grid:'2000px' };
+  const ids = { pomo:'pomo-wrap', zazen:'zazen-wrap', grid:'grid-wrap', calc:'calc-wrap' };
+  const heights = { pomo:'300px', zazen:'300px', grid:'2000px', calc:'600px' };
   const wrap = document.getElementById(ids[id]);
   const open = sectionState[id];
   if (open) {
@@ -748,6 +877,135 @@ function zazenReset() {
   document.getElementById('zazen-wrap').style.maxHeight = '300px';
 }
 
+// ═══════════════════════════════════════════════════════
+// CALCULATOR ENGINE
+// ═══════════════════════════════════════════════════════
+let calcVal  = '0';    // current display value
+let calcPrev = null;   // previous operand
+let calcOper = null;   // pending operator
+let calcFresh = false; // next digit replaces display
+
+let _fxRate = null;    // cached live USD/JPY rate
+
+async function fxFetch() {
+  try {
+    const r = await fetch('https://api.frankfurter.app/latest?from=USD&to=JPY');
+    const d = await r.json();
+    _fxRate = d.rates.JPY;
+  } catch(e) { _fxRate = null; }
+}
+fxFetch();
+
+function calcDisp() { document.getElementById('calc-main').textContent = calcVal; }
+
+function calcNum(n) {
+  if (calcFresh) { calcVal = n; calcFresh = false; }
+  else calcVal = calcVal === '0' ? n : calcVal + n;
+  calcDisp();
+}
+
+function calcDot() {
+  if (calcFresh) { calcVal = '0.'; calcFresh = false; }
+  else if (!calcVal.includes('.')) calcVal += '.';
+  calcDisp();
+}
+
+function calcOp(op) {
+  calcPrev = parseFloat(calcVal);
+  calcOper = op;
+  calcFresh = true;
+  document.getElementById('calc-expr').textContent = calcVal + ' ' + op;
+}
+
+function calcEq() {
+  if (calcOper === null || calcPrev === null) return;
+  const a = calcPrev, b = parseFloat(calcVal);
+  let res;
+  if (calcOper === '+') res = a + b;
+  else if (calcOper === '−') res = a - b;
+  else if (calcOper === '×') res = a * b;
+  else if (calcOper === '÷') res = b !== 0 ? a / b : 'ERR';
+  document.getElementById('calc-expr').textContent = a + ' ' + calcOper + ' ' + b + ' =';
+  calcVal = res === 'ERR' ? 'ERR' : String(parseFloat(res.toFixed(8)));
+  calcDisp();
+  calcOper = null; calcPrev = null; calcFresh = true;
+}
+
+function calcAC() {
+  calcVal = '0'; calcPrev = null; calcOper = null; calcFresh = false;
+  document.getElementById('calc-expr').textContent = ' ';
+  document.getElementById('calc-rate').textContent = ' ';
+  document.getElementById('calc-rate').className = '';
+  calcDisp();
+}
+
+function calcSign() {
+  if (calcVal === '0' || calcVal === 'ERR') return;
+  calcVal = calcVal.startsWith('-') ? calcVal.slice(1) : '-' + calcVal;
+  calcDisp();
+}
+
+function calcPct() {
+  const v = parseFloat(calcVal);
+  calcVal = String(parseFloat((v / 100).toFixed(10)));
+  calcDisp();
+}
+
+function calcRateInput() {
+  const v = document.getElementById('calc-rate-input').value.trim();
+  const badge = document.getElementById('calc-rate-badge');
+  if (v && parseFloat(v) > 0) {
+    badge.textContent = 'manual'; badge.className = 'manual';
+  } else {
+    badge.textContent = 'live'; badge.className = 'live';
+  }
+}
+
+function calcRateClear() {
+  document.getElementById('calc-rate-input').value = '';
+  const badge = document.getElementById('calc-rate-badge');
+  badge.textContent = 'live'; badge.className = 'live';
+}
+
+function calcGetRate() {
+  const override = parseFloat(document.getElementById('calc-rate-input').value);
+  if (override > 0) return { rate: override, source: 'manual override' };
+  if (_fxRate)      return { rate: _fxRate,   source: 'live frankfurter.app' };
+  return null;
+}
+
+async function calcFx(dir) {
+  if (!_fxRate) await fxFetch();
+  const rv = calcGetRate();
+  if (!rv) {
+    document.getElementById('calc-rate').textContent = 'rate unavailable — check connection';
+    document.getElementById('calc-rate').className = '';
+    return;
+  }
+  const v = parseFloat(calcVal.replace(/[^0-9.-]/g, ''));
+  if (isNaN(v)) return;
+  const { rate, source } = rv;
+  let res, expr, rateLabel;
+  if (dir === 'jpy2usd') {
+    res = (v / rate).toFixed(2);
+    expr = '¥' + v.toLocaleString() + ' ÷ ' + rate.toFixed(2);
+    calcVal = '$' + res;
+    rateLabel = 'USD/JPY ' + rate.toFixed(2) + '  ·  ' + source;
+  } else {
+    res = Math.round(v * rate);
+    expr = '$' + v + ' × ' + rate.toFixed(2);
+    calcVal = '¥' + res.toLocaleString();
+    rateLabel = 'USD/JPY ' + rate.toFixed(2) + '  ·  ' + source;
+  }
+  document.getElementById('calc-expr').textContent = expr;
+  document.getElementById('calc-main').textContent = calcVal;
+  const rl = document.getElementById('calc-rate');
+  rl.textContent = rateLabel;
+  rl.className = source.includes('manual') ? 'manual' : 'live';
+  calcFresh = true;
+}
+
+// ═══════════════════════════════════════════════════════
 // Safety net: show after 3s regardless
 setTimeout(() => {
   document.getElementById('clock-body').classList.add('ready');
