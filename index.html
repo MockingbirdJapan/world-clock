@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -220,36 +219,51 @@ body.fs { display:flex; flex-direction:column; }
 
 /* fullscreen mode removed */
 
-/* ── HABIT TRACKER ── */
-#habit-tracker-wrap { }
-#habit-month-nav { display:flex; justify-content:space-between; align-items:center; padding:7px 14px; background:#030303; border-bottom:1px solid #0d0d0d; }
-.hmnav-btn { background:transparent; border:none; color:#252525; font-size:13px; cursor:pointer; padding:0 6px; font-family:var(--ui); line-height:1; }
-.hmnav-btn:hover { color:#555; }
-#hmnav-label { font-size:8px; letter-spacing:3px; color:#2a2a2a; text-transform:uppercase; }
-.ht-grid { display:grid; grid-template-columns:1fr 1fr; gap:1px; background:#0d0d0d; }
-.ht-box { background:#050505; padding:10px 12px 12px; }
-.ht-box.bt { border-top:1px solid #0d0d0d; }
-.ht-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:6px; }
-.ht-left { display:flex; align-items:center; gap:6px; flex-wrap:nowrap; overflow:hidden; }
-.ht-title { font-size:8px; color:#3a3a3a; letter-spacing:2px; text-transform:uppercase; white-space:nowrap; }
-.ht-streak { font-size:8px; letter-spacing:1px; color:var(--on); white-space:nowrap; }
+/* ── HABIT TRACKER — Option B rows ── */
+.ht-row { border-bottom:1px solid #0a0a0a; }
+.ht-row:last-child { border-bottom:none; }
+.ht-row-inner { display:flex; align-items:center; gap:10px; padding:9px 14px; background:#050505; cursor:pointer; transition:background .1s; }
+.ht-row-inner:hover { background:#080808; }
+.ht-row-inner.ht-open { background:#070600; }
+.ht-icon { flex-shrink:0; width:16px; display:flex; align-items:center; justify-content:center; }
+.ht-icon-sq { width:11px; height:11px; border:1.5px solid var(--on); background:transparent; }
+.ht-icon-sq.done { background:var(--on); }
+.ht-icon-ci { width:11px; height:11px; border-radius:50%; border:1.5px solid var(--on); background:transparent; }
+.ht-icon-ci.done { background:var(--on); }
+.ht-row-label { font-size:8px; letter-spacing:2px; color:#3a3a3a; text-transform:uppercase; width:62px; flex-shrink:0; font-family:var(--ui); }
+.ht-dots { display:flex; align-items:center; gap:2px; flex:1; overflow:hidden; }
+.ht-week-gap { width:4px; flex-shrink:0; }
+.ht-dot { width:7px; height:7px; border-radius:1px; background:#111; flex-shrink:0; cursor:pointer; border:1px solid transparent; transition:background .1s; }
+.ht-dot.done { background:var(--on); }
+.ht-dot.ht-today-dot { border-color:#252525; }
+.ht-dot.ht-today-dot.done { border-color:rgba(255,255,255,0.2); }
+.ht-dot:hover { border-color:#333; }
+.ht-dot.ht-future-dot { opacity:0; cursor:default; pointer-events:none; }
+.ht-stats { display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0; gap:1px; }
+.ht-streak { font-size:9px; color:var(--on); letter-spacing:1px; white-space:nowrap; }
 .ht-streak.zero { color:#1e1e1e; }
 .ht-streak.fire::after { content:'▲'; font-size:6px; margin-left:2px; color:var(--on); }
-.ht-best { font-size:7px; letter-spacing:1px; color:#1e1e1e; white-space:nowrap; }
-.ht-icon-sq  { width:11px; height:11px; border:1.5px solid var(--on); background:transparent; flex-shrink:0; }
-.ht-icon-ci  { width:11px; height:11px; border-radius:50%; border:1.5px solid var(--on); background:transparent; flex-shrink:0; }
-.ht-icon-dia { width:13px; height:13px; flex-shrink:0; display:flex; align-items:center; justify-content:center; overflow:visible; }
-.ht-cal { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
-.ht-dow { font-size:6px; color:#1a1a1a; text-align:center; padding-bottom:3px; letter-spacing:1px; }
-.ht-day { height:19px; display:flex; align-items:center; justify-content:center; font-size:7px; color:#1e1e1e; border-radius:2px; cursor:pointer; user-select:none; border:1px solid transparent; transition:background .1s, border-color .1s; }
-.ht-day:hover { border-color:#2a2a2a; }
-.ht-day.ht-today { border-color:#2a2a2a; color:#444; }
-.ht-day.ht-done { background:var(--on); color:#000; border-color:var(--on); }
-.ht-day.ht-done:hover { background:#b88f00; }
-.ht-day.ht-done.ht-today { border-color:rgba(255,255,255,0.2); }
-.ht-day.ht-future { opacity:0; cursor:default; pointer-events:none; }
-.ht-day.ht-empty { cursor:default; pointer-events:none; }
-.ht-day.ht-empty:hover { border-color:transparent; }
+.ht-best { font-size:7px; letter-spacing:1px; color:#252525; white-space:nowrap; }
+.ht-row-arr { font-size:8px; color:#1e1e1e; flex-shrink:0; transition:transform .2s; margin-left:4px; }
+.ht-row-arr.ht-open { transform:rotate(180deg); }
+.ht-cal-drawer { overflow:hidden; max-height:0; opacity:0; transition:max-height .25s ease, opacity .2s ease; }
+.ht-cal-drawer.ht-open { max-height:300px; opacity:1; }
+.ht-cal-wrap { background:#030303; padding:10px 14px 12px; border-top:1px solid #0d0d0d; }
+.ht-cal-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.ht-cal-month { font-size:8px; letter-spacing:3px; color:#2a2a2a; text-transform:uppercase; }
+.ht-cal-btn { background:transparent; border:none; color:#1e1e1e; font-size:13px; cursor:pointer; padding:0 4px; font-family:var(--ui); line-height:1; }
+.ht-cal-btn:hover { color:#555; }
+.ht-cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:2px; }
+.ht-cal-dow { font-size:6px; color:#1a1a1a; text-align:center; padding-bottom:3px; letter-spacing:1px; }
+.ht-cal-day { height:19px; display:flex; align-items:center; justify-content:center; font-size:7px; color:#1e1e1e; border-radius:2px; cursor:pointer; user-select:none; border:1px solid transparent; transition:background .1s, border-color .1s; }
+.ht-cal-day:hover { border-color:#2a2a2a; }
+.ht-cal-day.ht-cal-today { border-color:#2a2a2a; color:#444; }
+.ht-cal-day.ht-cal-done { background:var(--on); color:#000; border-color:var(--on); }
+.ht-cal-day.ht-cal-done:hover { background:#b88f00; }
+.ht-cal-day.ht-cal-done.ht-cal-today { border-color:rgba(255,255,255,0.2); }
+.ht-cal-day.ht-cal-future { opacity:0; cursor:default; pointer-events:none; }
+.ht-cal-day.ht-cal-empty { cursor:default; pointer-events:none; }
+.ht-cal-day.ht-cal-empty:hover { border-color:transparent; }
 </style>
 </head>
 <body>
@@ -369,59 +383,7 @@ body.fs { display:flex; flex-direction:column; }
     <span class="toggle-arr open" id="arr-habits2">▼</span>
   </div>
   <div class="collapsible" id="habits-wrap" style="max-height:2000px; opacity:1;">
-    <div id="habit-tracker-wrap">
-      <div id="habit-month-nav">
-        <button class="hmnav-btn" onclick="htChangeMonth(-1);event.stopPropagation()">&#8249;</button>
-        <span id="hmnav-label">March 2026</span>
-        <button class="hmnav-btn" onclick="htChangeMonth(1);event.stopPropagation()">&#8250;</button>
-      </div>
-      <div class="ht-grid">
-        <div class="ht-box">
-          <div class="ht-header">
-            <div class="ht-left">
-              <div class="ht-icon-sq"></div>
-              <span class="ht-title">Focus</span>
-              <span class="ht-streak" id="hts-focus">0d</span>
-            </div>
-            <span class="ht-best" id="htb-focus">best 0d</span>
-          </div>
-          <div class="ht-cal" id="htc-focus"></div>
-        </div>
-        <div class="ht-box">
-          <div class="ht-header">
-            <div class="ht-left">
-              <div class="ht-icon-ci"></div>
-              <span class="ht-title">Breathe</span>
-              <span class="ht-streak" id="hts-breathe">0d</span>
-            </div>
-            <span class="ht-best" id="htb-breathe">best 0d</span>
-          </div>
-          <div class="ht-cal" id="htc-breathe"></div>
-        </div>
-        <div class="ht-box bt">
-          <div class="ht-header">
-            <div class="ht-left">
-              <svg width="12" height="11" style="flex-shrink:0;overflow:visible;"><polygon points="6,1 11,10 1,10" fill="none" stroke="#D4A400" stroke-width="1.5"/></svg>
-              <span class="ht-title">Exercise</span>
-              <span class="ht-streak" id="hts-exercise">0d</span>
-            </div>
-            <span class="ht-best" id="htb-exercise">best 0d</span>
-          </div>
-          <div class="ht-cal" id="htc-exercise"></div>
-        </div>
-        <div class="ht-box bt">
-          <div class="ht-header">
-            <div class="ht-left">
-              <svg width="13" height="13" viewBox="0 0 13 13" style="flex-shrink:0;overflow:visible;"><polygon class="ht-dia-poly" points="6.5,1 12,6.5 6.5,12 1,6.5" fill="none" stroke="#D4A400" stroke-width="1.5"/></svg>
-              <span class="ht-title">Sleep</span>
-              <span class="ht-streak" id="hts-sleep">0d</span>
-            </div>
-            <span class="ht-best" id="htb-sleep">best 0d</span>
-          </div>
-          <div class="ht-cal" id="htc-sleep"></div>
-        </div>
-      </div>
-    </div>
+    <div id="habit-list"></div>
   </div>
 
   <!-- Calculator toggle -->
@@ -615,14 +577,15 @@ function habitRender() {
   const k = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
   const all = JSON.parse(localStorage.getItem('wc_ht') || '{}');
   const day = all[k] || {};
-  const sq = document.getElementById('h-sq');
-  const ci = document.getElementById('h-ci');
+  const sq  = document.getElementById('h-sq');
+  const ci  = document.getElementById('h-ci');
   const tri = document.getElementById('h-tri-poly');
   const dia = document.getElementById('h-dia-poly');
-  if (sq)  sq.classList.toggle('done', !!day.focus);
-  if (ci)  ci.classList.toggle('done', !!day.breathe);
-  if (tri) tri.setAttribute('fill', day.exercise ? '#D4A400' : 'none');
-  if (dia) dia.setAttribute('fill', day.sleep ? '#D4A400' : 'none');
+  if (sq)  sq.classList.toggle('done',  !!day.focus);
+  if (ci)  ci.classList.toggle('done',  !!day.breathe);
+  if (tri) tri.setAttribute('fill',     day.exercise ? '#D4A400' : 'none');
+  if (dia) dia.setAttribute('fill',     day.sleep    ? '#D4A400' : 'none');
+  if (typeof htUpdateIcons === 'function') htUpdateIcons();
 }
 
 function toggleHabit(which) {
@@ -1160,80 +1123,254 @@ function playClockEffect() {
 }
 
 // ═══════════════════════════════════════════════════════
-// HABIT TRACKER ENGINE
+// HABIT TRACKER ENGINE — Option B rows
 // ═══════════════════════════════════════════════════════
 const HT_HABITS = ['focus','breathe','exercise','sleep'];
 const HT_MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const HT_LABELS = { focus:'Focus', breathe:'Breathe', exercise:'Exercise', sleep:'Sleep' };
 
 const _htToday = new Date();
-let _htViewYr = _htToday.getFullYear();
-let _htViewMo = _htToday.getMonth();
+const _htTOD   = _htToday.getDate();
+const _htTOM   = _htToday.getMonth();
+const _htTOY   = _htToday.getFullYear();
+let _htCalMo   = _htTOM;
+let _htCalYr   = _htTOY;
 let _htAllDonePlayed = false;
+const _htOpenRows = {};
 
 function htKey(yr, mo, day) {
   return yr + '-' + String(mo+1).padStart(2,'0') + '-' + String(day).padStart(2,'0');
 }
-
 function htLoadAll() {
   try { return JSON.parse(localStorage.getItem('wc_ht') || '{}'); } catch(e) { return {}; }
 }
-
 function htSaveAll(data) {
   try { localStorage.setItem('wc_ht', JSON.stringify(data)); } catch(e) {}
 }
 
-function htGetDay(yr, mo, day) {
-  const all = htLoadAll();
-  return all[htKey(yr, mo, day)] || {};
-}
-
-function htSetDay(yr, mo, day, habit, val) {
-  const all = htLoadAll();
-  const k = htKey(yr, mo, day);
-  if (!all[k]) all[k] = {};
-  all[k][habit] = val;
-  htSaveAll(all);
-}
-
 function htCalcStreak(habit) {
   const all = htLoadAll();
-  const td = _htToday;
-  let streak = 0;
-  const cur = new Date(td.getFullYear(), td.getMonth(), td.getDate());
-  cur.setDate(cur.getDate() - 1);
+  let s = 0;
+  const cur = new Date(_htTOY, _htTOM, _htTOD - 1);
   while (true) {
     const k = htKey(cur.getFullYear(), cur.getMonth(), cur.getDate());
-    if (all[k] && all[k][habit]) { streak++; cur.setDate(cur.getDate() - 1); }
+    if (all[k] && all[k][habit]) { s++; cur.setDate(cur.getDate()-1); }
     else break;
-    if (streak > 3650) break;
+    if (s > 3650) break;
   }
-  return streak;
+  return s;
 }
 
 function htCalcBest(habit) {
   const all = htLoadAll();
   const keys = Object.keys(all).sort();
-  let best = 0, cur = 0, prev = null;
+  let best=0, cur=0, prev=null;
   keys.forEach(k => {
     if (all[k] && all[k][habit]) {
-      if (prev) {
-        const pd = new Date(prev), cd = new Date(k);
-        const diff = (cd - pd) / 86400000;
-        cur = diff === 1 ? cur + 1 : 1;
-      } else { cur = 1; }
-      if (cur > best) best = cur;
-      prev = k;
-    } else { cur = 0; prev = null; }
+      if (prev) { const diff=(new Date(k)-new Date(prev))/86400000; cur=diff===1?cur+1:1; }
+      else cur=1;
+      if (cur>best) best=cur;
+      prev=k;
+    } else { cur=0; prev=null; }
   });
-  const live = htCalcStreak(habit);
-  return Math.max(best, live);
+  return Math.max(best, htCalcStreak(habit));
 }
+
+function htCalcPct(habit) {
+  const all = htLoadAll();
+  const daysInMo = new Date(_htTOY, _htTOM+1, 0).getDate();
+  const days = Math.min(_htTOD, daysInMo);
+  let done=0;
+  for (let d=1; d<=days; d++) {
+    const k = htKey(_htTOY, _htTOM, d);
+    if (all[k] && all[k][habit]) done++;
+  }
+  return Math.round((done/days)*100);
+}
+
+function htMakeIcon(habit) {
+  if (habit==='focus')
+    return '<div class="ht-icon-sq" id="htico-focus"></div>';
+  if (habit==='breathe')
+    return '<div class="ht-icon-ci" id="htico-breathe"></div>';
+  if (habit==='exercise')
+    return '<svg id="htico-exercise" width="13" height="12" viewBox="0 0 13 12" style="overflow:visible"><polygon id="htico-exercise-p" points="6.5,1 12,11 1,11" fill="none" stroke="#D4A400" stroke-width="1.5"/></svg>';
+  if (habit==='sleep')
+    return '<svg id="htico-sleep" width="13" height="13" viewBox="0 0 13 13" style="overflow:visible"><polygon id="htico-sleep-p" points="6.5,1 12,6.5 6.5,12 1,6.5" fill="none" stroke="#D4A400" stroke-width="1.5"/></svg>';
+}
+
+function htBuildDots(habit) {
+  const all  = htLoadAll();
+  const daysInMo = new Date(_htTOY, _htTOM+1, 0).getDate();
+  let html = '';
+  for (let d=1; d<=daysInMo; d++) {
+    // week gap every 7 days starting from 1
+    if (d>1 && (d-1)%7===0) html += '<div class="ht-week-gap"></div>';
+    const isToday  = d===_htTOD;
+    const isFuture = d>_htTOD;
+    const k = htKey(_htTOY, _htTOM, d);
+    const done = all[k] && all[k][habit];
+    let cls = 'ht-dot';
+    if (done)    cls += ' done';
+    if (isToday) cls += ' ht-today-dot';
+    if (isFuture) cls += ' ht-future-dot';
+    html += '<div class="'+cls+'" data-day="'+d+'" data-habit="'+habit+'"></div>';
+  }
+  return html;
+}
+
+function htBuildCal(habit) {
+  const all = htLoadAll();
+  const daysInMo = new Date(_htCalYr, _htCalMo+1, 0).getDate();
+  const firstDow = (new Date(_htCalYr, _htCalMo, 1).getDay()+6)%7;
+  const isCurMo  = _htCalYr===_htTOY && _htCalMo===_htTOM;
+  let html = '<div class="ht-cal-nav">'
+    + '<button class="ht-cal-btn" onclick="htCalMonth(-1);event.stopPropagation()">&#8249;</button>'
+    + '<span class="ht-cal-month">'+HT_MONTHS[_htCalMo]+' '+_htCalYr+'</span>'
+    + '<button class="ht-cal-btn" onclick="htCalMonth(1);event.stopPropagation()">&#8250;</button>'
+    + '</div><div class="ht-cal-grid">';
+  ['M','T','W','T','F','S','S'].forEach(d => html += '<div class="ht-cal-dow">'+d+'</div>');
+  for (let i=0; i<firstDow; i++) html += '<div class="ht-cal-day ht-cal-empty"></div>';
+  for (let d=1; d<=daysInMo; d++) {
+    const isToday  = isCurMo && d===_htTOD;
+    const isFuture = isCurMo && d>_htTOD;
+    const k = htKey(_htCalYr, _htCalMo, d);
+    const done = all[k] && all[k][habit];
+    let cls = 'ht-cal-day';
+    if (isFuture) cls+=' ht-cal-future';
+    else { if (isToday) cls+=' ht-cal-today'; if (done) cls+=' ht-cal-done'; }
+    html += '<div class="'+cls+'" data-day="'+d+'" data-habit="'+habit+'" data-yr="'+_htCalYr+'" data-mo="'+_htCalMo+'">'+d+'</div>';
+  }
+  html += '</div>';
+  return html;
+}
+
+function htRenderList() {
+  const list = document.getElementById('habit-list');
+  if (!list) return;
+  list.innerHTML = '';
+  HT_HABITS.forEach(habit => {
+    const s   = htCalcStreak(habit);
+    const b   = htCalcBest(habit);
+    const pct = htCalcPct(habit);
+    const streakCls = s===0?' zero':s>=7?' fire':'';
+    const isOpen = _htOpenRows[habit];
+
+    const row = document.createElement('div');
+    row.className = 'ht-row';
+    row.id = 'ht-row-'+habit;
+    row.innerHTML =
+      '<div class="ht-row-inner' + (isOpen ? ' ht-open' : '') + '" id="ht-inner-' + habit + '" data-habit="' + habit + '">'
+        + '<div class="ht-icon">' + htMakeIcon(habit) + '</div>'
+        + '<span class="ht-row-label">' + HT_LABELS[habit] + '</span>'
+        + '<div class="ht-dots" id="ht-dots-' + habit + '">' + htBuildDots(habit) + '</div>'
+        + '<div class="ht-stats">'
+          + '<span class="ht-streak' + streakCls + '">' + s + 'd</span>'
+          + '<span class="ht-best">' + pct + '% · best ' + b + 'd</span>'
+        + '</div>'
+        + '<span class="ht-row-arr' + (isOpen ? ' ht-open' : '') + '" id="ht-arr-' + habit + '">▼</span>'
+      + '</div>'
+      + '<div class="ht-cal-drawer' + (isOpen ? ' ht-open' : '') + '" id="ht-cal-' + habit + '">'
+        + '<div class="ht-cal-wrap" id="ht-calwrap-' + habit + '">' + htBuildCal(habit) + '</div>'
+      + '</div>';
+    // Attach row toggle via event listener, not inline onclick
+    row.querySelector('[data-habit]').addEventListener('click', (function(hb){ return function(){ htToggleRow(hb); }; })(habit));
+        list.appendChild(row);
+  });
+  htAttachDotHandlers();
+  htAttachCalHandlers();
+  htUpdateIcons();
+}
+
+function htAttachDotHandlers() {
+  document.querySelectorAll('.ht-dot[data-habit]').forEach(dot => {
+    dot.addEventListener('click', e => {
+      e.stopPropagation();
+      const d = parseInt(dot.dataset.day);
+      const habit = dot.dataset.habit;
+      if (!d || d > _htTOD) return;
+      if (habit==='sleep' && d===_htTOD) {
+        const yd = new Date(_htTOY, _htTOM, _htTOD-1);
+        htToggleDay(yd.getFullYear(), yd.getMonth(), yd.getDate(), habit);
+      } else {
+        htToggleDay(_htTOY, _htTOM, d, habit);
+      }
+    });
+  });
+}
+
+function htAttachCalHandlers() {
+  document.querySelectorAll('.ht-cal-day[data-habit]').forEach(day => {
+    day.addEventListener('click', e => {
+      e.stopPropagation();
+      const d     = parseInt(day.dataset.day);
+      const yr    = parseInt(day.dataset.yr);
+      const mo    = parseInt(day.dataset.mo);
+      const habit = day.dataset.habit;
+      const isCurMo = yr===_htTOY && mo===_htTOM;
+      if (!d || (isCurMo && d>_htTOD)) return;
+      if (habit==='sleep' && isCurMo && d===_htTOD) {
+        const yd = new Date(_htTOY, _htTOM, _htTOD-1);
+        htToggleDay(yd.getFullYear(), yd.getMonth(), yd.getDate(), habit);
+      } else {
+        htToggleDay(yr, mo, d, habit);
+      }
+    });
+  });
+}
+
+function htToggleDay(yr, mo, day, habit) {
+  const all = htLoadAll();
+  const k = htKey(yr, mo, day);
+  if (!all[k]) all[k] = {};
+  all[k][habit] = !all[k][habit];
+  htSaveAll(all);
+  htRenderList();
+  htCheckAllDone();
+  if (typeof habitRender === 'function') habitRender();
+}
+
+function htToggleRow(habit) {
+  _htOpenRows[habit] = !_htOpenRows[habit];
+  const inner  = document.getElementById('ht-inner-'+habit);
+  const cal    = document.getElementById('ht-cal-'+habit);
+  const arr    = document.getElementById('ht-arr-'+habit);
+  if (inner) inner.classList.toggle('ht-open', _htOpenRows[habit]);
+  if (cal)   cal.classList.toggle('ht-open',   _htOpenRows[habit]);
+  if (arr)   arr.classList.toggle('ht-open',   _htOpenRows[habit]);
+}
+
+function htCalMonth(dir) {
+  _htCalMo += dir;
+  if (_htCalMo>11) { _htCalMo=0; _htCalYr++; }
+  if (_htCalMo<0)  { _htCalMo=11; _htCalYr--; }
+  HT_HABITS.forEach(habit => {
+    const wrap = document.getElementById('ht-calwrap-'+habit);
+    if (wrap) { wrap.innerHTML = htBuildCal(habit); htAttachCalHandlers(); }
+  });
+}
+
+function htUpdateIcons() {
+  const all = htLoadAll();
+  const k = htKey(_htTOY, _htTOM, _htTOD);
+  const day = all[k] || {};
+  const sq = document.getElementById('htico-focus');
+  const ci = document.getElementById('htico-breathe');
+  const tp = document.getElementById('htico-exercise-p');
+  const dp = document.getElementById('htico-sleep-p');
+  if (sq) sq.classList.toggle('done', !!day.focus);
+  if (ci) ci.classList.toggle('done', !!day.breathe);
+  if (tp) tp.setAttribute('fill', day.exercise ? '#D4A400' : 'none');
+  if (dp) dp.setAttribute('fill', day.sleep     ? '#D4A400' : 'none');
+}
+
+function htUpdateHeaders() { htRenderList(); }
 
 function htCheckAllDone() {
   const all = htLoadAll();
-  const tk = htKey(_htToday.getFullYear(), _htToday.getMonth(), _htToday.getDate());
-  const today = all[tk] || {};
-  const allDone = HT_HABITS.every(h => today[h] === true);
+  const k = htKey(_htTOY, _htTOM, _htTOD);
+  const today = all[k] || {};
+  const allDone = HT_HABITS.every(h => today[h]===true);
   if (allDone && !_htAllDonePlayed) {
     _htAllDonePlayed = true;
     playClockEffect();
@@ -1241,100 +1378,12 @@ function htCheckAllDone() {
   if (!allDone) _htAllDonePlayed = false;
 }
 
-function htUpdateTrackerIcons() {
-  const all = JSON.parse(localStorage.getItem('wc_ht') || '{}');
-  const today = new Date();
-  const k = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(today.getDate()).padStart(2,'0');
-  const day = all[k] || {};
-  document.querySelectorAll('.ht-dia-poly').forEach(p => {
-    p.setAttribute('fill', day.sleep ? '#D4A400' : 'none');
-  });
-}
+function htRenderAll() { htRenderList(); htCheckAllDone(); }
 
-function htUpdateHeaders() {
-  HT_HABITS.forEach(habit => {
-    const s = htCalcStreak(habit);
-    const b = htCalcBest(habit);
-    const sel = document.getElementById('hts-' + habit);
-    const bel = document.getElementById('htb-' + habit);
-    if (sel) {
-      sel.textContent = s + 'd';
-      sel.className = 'ht-streak' + (s === 0 ? ' zero' : s >= 7 ? ' fire' : '');
-    }
-    if (bel) bel.textContent = 'best ' + b + 'd';
-  });
-}
+function htUpdateTrackerIcons() { htUpdateIcons(); }
 
-function htRenderCal(habit) {
-  const grid = document.getElementById('htc-' + habit);
-  if (!grid) return;
-  grid.innerHTML = '';
-  const dows = ['M','T','W','T','F','S','S'];
-  dows.forEach(d => {
-    const el = document.createElement('div');
-    el.className = 'ht-dow'; el.textContent = d;
-    grid.appendChild(el);
-  });
-  const firstDow = (new Date(_htViewYr, _htViewMo, 1).getDay() + 6) % 7;
-  for (let i = 0; i < firstDow; i++) {
-    const el = document.createElement('div');
-    el.className = 'ht-day ht-empty'; grid.appendChild(el);
-  }
-  const days = new Date(_htViewYr, _htViewMo+1, 0).getDate();
-  const isCurMo = _htViewYr === _htToday.getFullYear() && _htViewMo === _htToday.getMonth();
-  const all = htLoadAll();
-  for (let d = 1; d <= days; d++) {
-    const el = document.createElement('div');
-    el.className = 'ht-day';
-    el.textContent = d;
-    const isToday  = isCurMo && d === _htToday.getDate();
-    const isFuture = isCurMo && d > _htToday.getDate();
-    const k = htKey(_htViewYr, _htViewMo, d);
-    const done = all[k] && all[k][habit];
-    if (isFuture) { el.classList.add('ht-future'); }
-    else {
-      if (isToday) el.classList.add('ht-today');
-      if (done)    el.classList.add('ht-done');
-      el.addEventListener('click', () => {
-        if (habit === 'sleep' && isToday) {
-          const yd = new Date(_htToday); yd.setDate(yd.getDate() - 1);
-          const yk = htKey(yd.getFullYear(), yd.getMonth(), yd.getDate());
-          const cur = all[yk] && all[yk][habit];
-          htSetDay(yd.getFullYear(), yd.getMonth(), yd.getDate(), habit, !cur);
-          htRenderAll();
-          return;
-        }
-        htSetDay(_htViewYr, _htViewMo, d, habit, !done);
-        htRenderAll();
-      });
-    }
-    grid.appendChild(el);
-  }
-}
-
-function htRenderAll() {
-  HT_HABITS.forEach(h => htRenderCal(h));
-  htUpdateHeaders();
-  htUpdateTrackerIcons();
-  htCheckAllDone();
-}
-
-function htChangeMonth(dir) {
-  _htViewMo += dir;
-  if (_htViewMo > 11) { _htViewMo = 0; _htViewYr++; }
-  if (_htViewMo < 0)  { _htViewMo = 11; _htViewYr--; }
-  const lbl = document.getElementById('hmnav-label');
-  if (lbl) lbl.textContent = HT_MONTHS[_htViewMo] + ' ' + _htViewYr;
-  HT_HABITS.forEach(h => htRenderCal(h));
-  htUpdateHeaders();
-}
-
-// Init month label and render
-(function() {
-  const lbl = document.getElementById('hmnav-label');
-  if (lbl) lbl.textContent = HT_MONTHS[_htViewMo] + ' ' + _htViewYr;
-  htRenderAll();
-})();
+// Init
+htRenderList();
 
 // Safety net: show after 3s regardless
 setTimeout(() => {
