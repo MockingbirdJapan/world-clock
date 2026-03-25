@@ -1151,7 +1151,7 @@ function htSaveAll(data) {
 function htCalcStreak(habit) {
   const all = htLoadAll();
   let s = 0;
-  const cur = new Date(_htTOY, _htTOM, _htTOD - 1);
+  const cur = new Date(_htTOY, _htTOM, _htTOD);
   while (true) {
     const k = htKey(cur.getFullYear(), cur.getMonth(), cur.getDate());
     if (all[k] && all[k][habit]) { s++; cur.setDate(cur.getDate()-1); }
@@ -1173,7 +1173,8 @@ function htCalcBest(habit) {
       prev=k;
     } else { cur=0; prev=null; }
   });
-  return Math.max(best, htCalcStreak(habit));
+  const live = htCalcStreak(habit);
+  return Math.max(best, live);
 }
 
 function htCalcPct(habit) {
